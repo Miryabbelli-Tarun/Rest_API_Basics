@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import APIView, api_view
 
 from api.serializers import StudentSerializer
 from students.models import Student
@@ -12,31 +12,66 @@ from students.models import Student
 #     std=list(students.values())
 #     return JsonResponse(std,safe=False)
 
-@api_view(['GET','POST'])
-def studentView(request):
-    if request.method=='GET':
+
+#-------------------- function based api views------------------
+# @api_view(['GET','POST'])
+# def studentView(request):
+#     if request.method=='GET':
+#         students=Student.objects.all()
+#         serializer=StudentSerializer(students,many=True)
+#         return Response(serializer.data,status=status.HTTP_200_OK)
+#     elif request.method=='POST':
+#         serializer=StudentSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data,status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+# @api_view(['GET','PUT','DELETE'])
+# def studentDetailsView(request,pk):
+#     student=get_object_or_404(Student,pk=pk)
+#     if request.method=='GET':
+#         serializer=StudentSerializer(student)
+#         return Response(serializer.data,status=status.HTTP_200_OK)
+#     elif request.method=='PUT':
+#         serializer=StudentSerializer(student,data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data,status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+#     elif request.method=='DELETE':
+#         student.delete()
+#         return Response({'message':'deleted succesfully'},status=status.HTTP_204_NO_CONTENT)
+
+
+#------------------ Class based api views-------------------------------
+class StudentsView(APIView):
+    def get(self,request):
         students=Student.objects.all()
         serializer=StudentSerializer(students,many=True)
         return Response(serializer.data,status=status.HTTP_200_OK)
-    elif request.method=='POST':
+    def post(self,request):
         serializer=StudentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-
-@api_view(['GET','PUT','DELETE'])
-def studentDetailsView(request,pk):
-    student=get_object_or_404(Student,pk=pk)
-    if request.method=='GET':
+    
+class StudentsdetailsView(APIView):
+    def get_obj(self,pk):
+        return get_object_or_404(Student,pk=pk)
+    def get(self,request,pk):
+        student=self.get_obj(pk)
         serializer=StudentSerializer(student)
         return Response(serializer.data,status=status.HTTP_200_OK)
-    elif request.method=='PUT':
+    def put(self,request,pk):
+        student=self.get_obj(pk)
         serializer=StudentSerializer(student,data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-    elif request.method=='DELETE':
+    def delete(self,request,pk):
+        student=self.get_obj(pk)
         student.delete()
-        return Response({'message':'deleted succesfully'},status=status.HTTP_204_NO_CONTENT)
+        return Response({'message':'DELETE SUCCESFUL'},status=status.HTTP_404_NOT_FOUND)
