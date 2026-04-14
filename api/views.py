@@ -77,20 +77,36 @@ from students.models import Student
 #         return Response({'message':'DELETE SUCCESFUL'},status=status.HTTP_404_NOT_FOUND)
 
 #---------------------- mixins --------------------
-class StudentsView(mixins.ListModelMixin,mixins.CreateModelMixin,generics.GenericAPIView):
-    queryset=Student.objects.all()
-    serializer_class=StudentSerializer
-    def get(self,request):
-        return self.list(request)
-    def post(self,request):
-        return self.create(request)
+# class StudentsView(mixins.ListModelMixin,mixins.CreateModelMixin,generics.GenericAPIView):
+#     queryset=Student.objects.all()
+#     serializer_class=StudentSerializer
+#     def get(self,request):
+#         return self.list(request)
+#     def post(self,request):
+#         return self.create(request)
     
-class StudentsdetailsView(mixins.RetrieveModelMixin,mixins.UpdateModelMixin,mixins.DestroyModelMixin,generics.GenericAPIView):
+# class StudentsdetailsView(mixins.RetrieveModelMixin,mixins.UpdateModelMixin,mixins.DestroyModelMixin,generics.GenericAPIView):
+#     queryset=Student.objects.all()
+#     serializer_class=StudentSerializer
+#     def get(self,request,pk):
+#         return self.retrieve(request)
+#     def put(self,request,pk):
+#         return self.update(request)
+#     def delete(self,request,pk):
+#         return self.destroy(request)
+
+#---------------------------Generics ----------------------------
+class StudentsView(generics.ListAPIView,generics.CreateAPIView):
+    # queryset=Student.objects.all()
+    serializer_class=StudentSerializer
+    def get_queryset(self):
+        queryset=Student.objects.all()
+        age=self.request.query_params.get('age')
+        if age:
+            queryset=queryset.filter(age__gte=40)
+        return queryset
+
+class StudentsdetailsView(generics.RetrieveAPIView,generics.UpdateAPIView,generics.DestroyAPIView):
     queryset=Student.objects.all()
     serializer_class=StudentSerializer
-    def get(self,request,pk):
-        return self.retrieve(request)
-    def put(self,request,pk):
-        return self.update(request)
-    def delete(self,request,pk):
-        return self.destroy(request)
+    lookup_field='pk'
