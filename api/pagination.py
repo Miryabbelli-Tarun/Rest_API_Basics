@@ -13,7 +13,7 @@ class MyPagination(PageNumberPagination):
             'current_page':self.page.number,
             'next_page':self.get_next_link(),
             'prev_page':self.get_previous_link(),
-            'response':data
+            'results':data
         })
     
 class myLimitoffsetPagination(LimitOffsetPagination):

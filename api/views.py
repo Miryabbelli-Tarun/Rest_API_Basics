@@ -4,10 +4,13 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import APIView, api_view,action
 from rest_framework import mixins,generics
+from api.filters import StudentFilter
 from api.pagination import MyPagination, myCursorPagination, myLimitoffsetPagination
 from api.serializers import MarksSerialier, StudentSerializer
 from students.models import Marks, Student
 from rest_framework import viewsets
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter,OrderingFilter
 # Create your views here.
 # def studentView(request):
 #     students=Student.objects.all()
@@ -155,6 +158,11 @@ from rest_framework import viewsets
 class StudentsView(generics.ListAPIView):
     queryset=Student.objects.all()
     serializer_class=StudentSerializer
+    filter_backends=[DjangoFilterBackend,SearchFilter,OrderingFilter]
+    # filterset_fields=['name']
+    filterset_class=StudentFilter
+    search_fields=['name','age']
+    ordering_fields=['id']
     
 
 class StudentMarks(generics.ListCreateAPIView):

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'api',
     'students',
     'rest_framework',
+    'django_filters'
 ]
 
 MIDDLEWARE = [
@@ -124,5 +125,5 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS':'api.pagination.MyPagination',
 
     'PAGE_SIZE':2,
-    
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
