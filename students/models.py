@@ -8,3 +8,15 @@ class Student(models.Model):
 
     def __str__(self):
         return self.name
+subjects=[
+    ('maths','maths'),
+    ('english','english'),
+    ('telugu','telugu'),
+]
+class Marks(models.Model):
+    student=models.ForeignKey(Student,on_delete=models.CASCADE,related_name='marks')
+    subject=models.CharField(choices=subjects)
+    marks=models.IntegerField()
+
+    def __str__(self):
+        return self.subject

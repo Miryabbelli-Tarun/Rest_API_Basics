@@ -4,8 +4,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import APIView, api_view,action
 from rest_framework import mixins,generics
-from api.serializers import StudentSerializer
-from students.models import Student
+from api.pagination import MyPagination, myCursorPagination, myLimitoffsetPagination
+from api.serializers import MarksSerialier, StudentSerializer
+from students.models import Marks, Student
 from rest_framework import viewsets
 # Create your views here.
 # def studentView(request):
@@ -141,12 +142,23 @@ from rest_framework import viewsets
 #         student.delete()
 #         return Response(status=status.HTTP_204_NO_CONTENT)
 
-class StudentViewset(viewsets.ModelViewSet):
+# class StudentViewset(viewsets.ModelViewSet):
+#     queryset=Student.objects.all()
+#     serializer_class=StudentSerializer
+
+#     @action(detail=False,methods=['get'])
+#     def student_age(self,request):
+#         students=Student.objects.filter(age__gte=40)
+#         serializer=self.get_serializer(students,many=True)
+#         return Response(serializer.data,status=status.HTTP_200_OK)
+
+class StudentsView(generics.ListAPIView):
     queryset=Student.objects.all()
     serializer_class=StudentSerializer
+    
 
-    @action(detail=False,methods=['get'])
-    def student_age(self,request):
-        students=Student.objects.filter(age__gte=40)
-        serializer=self.get_serializer(students,many=True)
-        return Response(serializer.data,status=status.HTTP_200_OK)
+class StudentMarks(generics.ListCreateAPIView):
+    queryset=Marks.objects.all()
+    serializer_class=MarksSerialier
+    pagination_class=myCursorPagination
+    
